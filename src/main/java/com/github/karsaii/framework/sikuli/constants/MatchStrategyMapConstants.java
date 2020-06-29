@@ -3,9 +3,11 @@ package com.github.karsaii.framework.sikuli.constants;
 import com.github.karsaii.framework.sikuli.enums.MatchSelectorStrategy;
 import com.github.karsaii.framework.sikuli.namespaces.match.MatchStrategyFunctions;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -22,6 +24,8 @@ public abstract class MatchStrategyMapConstants {
         )
     );
 
-    public static final Set<MatchSelectorStrategy> STRATEGY_MAP_KEY_SET = EnumSet.allOf(MatchSelectorStrategy.class);
-
+    public static final Set<String> STRATEGY_MAP_KEY_SET = new HashSet<>(Arrays.asList(
+        MatchSelectorStrategy.TEXT.getName(),
+        MatchSelectorStrategy.IMAGE.getName()
+    ));
 }

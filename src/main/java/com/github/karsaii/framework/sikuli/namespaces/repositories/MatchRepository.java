@@ -125,7 +125,7 @@ public interface MatchRepository {
     }
 
     static Map<String, DecoratedList<SelectorKeySpecificityData>> getInitializedTypeKeysMap() {
-        return CoreElementRepository.getInitializedTypeKeysMap(MatchStrategyMapConstants.STRATEGY_MAP_KEY_SET, MatchSelectorStrategy.class);
+        return CoreElementRepository.getInitializedTypeKeysMap(MatchStrategyMapConstants.STRATEGY_MAP_KEY_SET, String.class);
     }
 
     static <T> Data<CachedLazyMatchData> getIfContains(AbstractLazyResult<T> element) {

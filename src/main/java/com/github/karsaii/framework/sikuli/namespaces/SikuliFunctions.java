@@ -556,7 +556,7 @@ public interface SikuliFunctions {
                     var indexData = parameters.elementFilterData;
                     currentElement = (
                             indexData.isFiltered ? (
-                                indexData.apply(new MatchFilterParameters(locators, MatchFinderConstants.manyGetterMap, ManyMatchesGetter.getValueOf(getter)))
+                                indexData.apply(new MatchFilterParameters<>(locators, MatchFinderConstants.manyGetterMap, ManyMatchesGetter.getValueOf(getter)))
                             ) : MatchFilterFunctions.getElement(locators, MatchFinderConstants.singleGetterMap, SingleMatchGetter.getValueOf(getter))
                     ).apply(region);
                     message = appendMessage(message, currentElement.message.toString());
