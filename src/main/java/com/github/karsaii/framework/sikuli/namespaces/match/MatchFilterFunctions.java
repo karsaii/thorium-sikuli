@@ -2,8 +2,10 @@ package com.github.karsaii.framework.sikuli.namespaces.match;
 
 import com.github.karsaii.core.namespaces.validators.CoreFormatter;
 import com.github.karsaii.core.records.Data;
+import com.github.karsaii.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.github.karsaii.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.github.karsaii.framework.sikuli.constants.RegionDataConstants;
+import com.github.karsaii.framework.sikuli.enums.ManyMatchesGetter;
 import com.github.karsaii.framework.sikuli.enums.SingleMatchGetter;
 import com.github.karsaii.framework.sikuli.namespaces.SikuliFunctions;
 import com.github.karsaii.framework.sikuli.namespaces.region.RegionFunctionFactory;
@@ -22,7 +24,7 @@ import static com.github.karsaii.core.namespaces.DataExecutionFunctions.ifDepend
 import static com.github.karsaii.core.namespaces.DataExecutionFunctions.validChain;
 
 public interface MatchFilterFunctions {
-    private static <T> Function<T, Function<Region, Data<Match>>> getFilteredElement(String nameof, MatchFilterParameters data, Function<T, Function<Data<MatchList>, Data<Match>>> filterFunction, Function<T, String> valueGuard) {
+    private static <T> Function<T, Function<Region, Data<Match>>> getFilteredElement(String nameof, BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data, Function<T, Function<Data<MatchList>, Data<Match>>> filterFunction, Function<T, String> valueGuard) {
         return value -> ifDependency(
                 nameof,
                 MatchFilterParametersValidators.isInvalidElementFilterParametersMessage(data) + valueGuard.apply(value),
@@ -31,11 +33,11 @@ public interface MatchFilterFunctions {
         );
     }
 
-    static Function<Integer, Function<Region, Data<Match>>> getIndexedElement(MatchFilterParameters data) {
+    static <T, U> Function<Integer, Function<Region, Data<Match>>> getIndexedElement(BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data) {
         return getFilteredElement("getIndexedElement", data, SikuliFunctions::getElementByIndex, CoreFormatter::isNegativeMessage);
     }
 
-    static Function<String, Function<Region, Data<Match>>> getContainedTextElement(MatchFilterParameters data) {
+    static <T, U> Function<String, Function<Region, Data<Match>>> getContainedTextElement(BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data) {
         return getFilteredElement("getContainedTextElement", data, SikuliFunctions::getElementByContainedText, CoreFormatter::isBlankMessage);
     }
 

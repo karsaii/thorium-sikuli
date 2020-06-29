@@ -1,8 +1,8 @@
 package com.github.karsaii.framework.sikuli.records.lazy.filtered;
 
 import com.github.karsaii.core.records.Data;
+import com.github.karsaii.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.github.karsaii.framework.core.abstracts.lazy.filtered.BaseFilterData;
-import com.github.karsaii.framework.core.records.element.finder.BaseFilterParameters;
 import com.github.karsaii.framework.sikuli.enums.ManyMatchesGetter;
 import com.github.karsaii.framework.sikuli.namespaces.region.RegionFunctionFactory;
 import com.github.karsaii.framework.sikuli.namespaces.extensions.boilers.MatchList;

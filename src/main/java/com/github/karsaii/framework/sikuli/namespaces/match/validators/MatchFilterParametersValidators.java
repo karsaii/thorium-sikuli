@@ -4,9 +4,11 @@ import com.github.karsaii.core.constants.validators.CoreFormatterConstants;
 import com.github.karsaii.core.extensions.namespaces.EmptiableFunctions;
 import com.github.karsaii.core.namespaces.validators.CoreFormatter;
 import com.github.karsaii.core.records.Data;
+import com.github.karsaii.framework.core.abstracts.element.finder.BaseFilterParameters;
 import com.github.karsaii.framework.core.namespaces.extensions.boilers.LazyLocatorList;
 import com.github.karsaii.framework.sikuli.enums.ManyMatchesGetter;
 import com.github.karsaii.framework.sikuli.enums.SingleMatchGetter;
+import com.github.karsaii.framework.sikuli.namespaces.extensions.boilers.MatchList;
 import com.github.karsaii.framework.sikuli.records.MatchFilterParameters;
 import org.sikuli.script.Region;
 
@@ -64,11 +66,11 @@ public interface MatchFilterParametersValidators {
         return isNotBlank(message) ? "isNullLazyLocatorListMessage: " + CoreFormatterConstants.PARAMETER_ISSUES_LINE + message : CoreFormatterConstants.EMPTY;
     }
 
-    private static <T> String isInvalidElementFilterParametersMessageCore(MatchFilterParameters data) {
+    private static <T, U> String isInvalidElementFilterParametersMessageCore(BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data) {
         return isNullLazyLocatorListMessage(data.locators) + getManyMatchesGetterErrorMessage(data.getterMap, data.getter);
     }
 
-    static <T> String isInvalidElementFilterParametersMessage(MatchFilterParameters data) {
+    static <T, U> String isInvalidElementFilterParametersMessage(BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data) {
         var message = CoreFormatter.isNullMessageWithName(data, "Element Filter Parameters data");
         if (isBlank(message)) {
             message += isInvalidElementFilterParametersMessageCore(data);
