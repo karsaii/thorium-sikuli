@@ -5,8 +5,8 @@ import com.github.karsaii.core.constants.validators.CoreFormatterConstants;
 import com.github.karsaii.core.extensions.DecoratedList;
 import com.github.karsaii.core.extensions.namespaces.CoreUtilities;
 import com.github.karsaii.core.extensions.namespaces.factories.DecoratedListFactory;
-import com.github.karsaii.core.extensions.namespaces.predicates.BasicPredicateFunctions;
-import com.github.karsaii.core.extensions.namespaces.predicates.CollectionPredicateFunctions;
+import com.github.karsaii.core.extensions.namespaces.predicates.BasicPredicates;
+import com.github.karsaii.core.extensions.namespaces.predicates.CollectionPredicates;
 import com.github.karsaii.core.namespaces.BaseExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataFactoryFunctions;
@@ -15,6 +15,7 @@ import com.github.karsaii.core.namespaces.validators.CoreFormatter;
 import com.github.karsaii.core.records.Data;
 import com.github.karsaii.framework.core.namespaces.FrameworkCoreUtilities;
 import com.github.karsaii.framework.core.namespaces.FrameworkFunctions;
+import com.github.karsaii.framework.core.namespaces.factory.LazyLocatorFactory;
 import com.github.karsaii.framework.sikuli.namespaces.factories.SikuliDataFactory;
 import com.github.karsaii.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.github.karsaii.framework.core.namespaces.extensions.boilers.LazyLocatorList;
@@ -54,6 +55,7 @@ import com.github.karsaii.framework.sikuli.records.lazy.LazyMatch;
 import com.github.karsaii.framework.sikuli.records.lazy.LazyMatchWithOptionsData;
 import org.sikuli.script.FindFailed;
 import org.sikuli.script.Match;
+import org.sikuli.script.Pattern;
 import org.sikuli.script.Region;
 
 import java.util.ArrayList;
@@ -75,11 +77,11 @@ import static com.github.karsaii.core.namespaces.DataExecutionFunctions.ifDepend
 import static com.github.karsaii.core.namespaces.DataFactoryFunctions.appendMessage;
 import static com.github.karsaii.core.namespaces.DataFactoryFunctions.prependMessage;
 import static com.github.karsaii.core.namespaces.DataFactoryFunctions.replaceMessage;
+import static com.github.karsaii.core.namespaces.predicates.DataPredicates.isInvalidOrFalse;
+import static com.github.karsaii.core.namespaces.predicates.DataPredicates.isValidNonFalse;
 import static com.github.karsaii.core.namespaces.validators.CoreFormatter.isInvalidOrFalseMessage;
 import static com.github.karsaii.core.namespaces.validators.CoreFormatter.isNegativeMessage;
 import static com.github.karsaii.core.namespaces.validators.CoreFormatter.isNullOrEmptyMessage;
-import static com.github.karsaii.core.namespaces.validators.DataValidators.isInvalidOrFalse;
-import static com.github.karsaii.core.namespaces.validators.DataValidators.isValidNonFalse;
 import static com.github.karsaii.framework.core.namespaces.validators.FrameworkCoreFormatter.isNullLazyElementMessage;
 import static com.github.karsaii.framework.sikuli.constants.RegionDataConstants.NULL_REGION_ALL;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -91,7 +93,7 @@ public interface SikuliFunctions {
     }
 
     static boolean isValidFindFailedException(FindFailed exception) {
-        return CoreUtilities.isException(exception) && CoreUtilities.isNotEqual(exception, SikuliCoreConstants.NULL_EXCEPTION);
+        return CoreUtilities.isException(exception) && CoreUtilities.isNotEqual(exception, SikuliCoreConstants.INVALID_FIND_FAILED_EXCEPTION);
     }
 
     static boolean isFindFailed(Exception ex) {
@@ -112,7 +114,7 @@ public interface SikuliFunctions {
     }
 
     private static <T> Iterator<Match> findAllNormalizedExceptions(Region region, T target) throws FindFailed {
-        var exception = SikuliCoreConstants.NULL_EXCEPTION;
+        var exception = SikuliCoreConstants.INVALID_FIND_FAILED_EXCEPTION;
         var matches = SikuliCoreConstants.NULL_MATCH_ITERATOR;
         try {
             matches = region.findAll(target);
@@ -141,7 +143,7 @@ public interface SikuliFunctions {
         return RegionFunctionFactory.get(ifDependency(
             "getCountOfElements",
             isNotNull(getter),
-            FrameworkCoreFormatter.isValidTypedNonEmptyListMessage(Match.class),
+            CoreFormatter.isValidTypedNonEmptyListMessage(Match.class),
             getter.andThen(SikuliDataFactory::getUnwrapped),
             FrameworkFunctions.getCountOfElements("Match"),
             SikuliDataConstants.NULL_INTEGER_NULL_REGION
@@ -149,7 +151,7 @@ public interface SikuliFunctions {
     }
 
     static <T> Data<MatchList> getElements(Region region, T target) {
-        var exception = SikuliCoreConstants.NULL_EXCEPTION;
+        var exception = SikuliCoreConstants.INVALID_FIND_FAILED_EXCEPTION;
         var matches = SikuliCoreConstants.NULL_MATCH_ITERATOR;
         try {
             matches = findAllNormalizedExceptions(region, target);
@@ -159,13 +161,13 @@ public interface SikuliFunctions {
 
         final var list = iteratorToList(matches);
         final var status = !isValidFindFailedException(exception);
-        final var object = status ? new MatchList(list) : SikuliCoreConstants.NULL_MATCH_MATCHLIST;
+        final var object = status ? new MatchList(list) : SikuliCoreConstants.INVALID_MATCHLIST;
         return DataFactoryFunctions.getWithNameAndMessage(object, status, "getElements", SikuliFormatters.getFindAllMessage(list.size(), status), exception);
     }
 
     private static Data<MatchList> getElementsCore(Data<Region> contextData, LazyLocator locator) {
         final var nameof = "getElementsCore";
-        final var negative = SikuliCoreConstants.NULL_MATCH_MATCHLIST;
+        final var negative = SikuliCoreConstants.INVALID_MATCHLIST;
         var errorMessage = FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator) + isInvalidOrFalseMessage(contextData);
         if (isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
@@ -177,13 +179,29 @@ public interface SikuliFunctions {
             return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
         }
 
-        final var data = SikuliUtilities.getLocator(locator);
+        var data = CoreDataConstants.NULL_STRING;
+        var similarity = 0.0;
+        if (locator.locator.contains(SikuliCoreConstants.SIMILARITY_SEPARATOR)) {
+            final var splits = locator.locator.split(SikuliCoreConstants.SIMILARITY_SEPARATOR);
+            similarity = Double.parseDouble(splits[1]);
+            data = SikuliUtilities.getLocator(LazyLocatorFactory.get(splits[0], locator.strategy));
+        } else {
+            data = SikuliUtilities.getLocator(locator);
+        }
+
         errorMessage = isInvalidOrFalseMessage(data);
+        if (locator.locator.contains(SikuliCoreConstants.SIMILARITY_SEPARATOR)) {
+            errorMessage += CoreFormatter.isFalseMessageWithName(Double.compare(similarity, 0.600) == 1, "Similarity");
+        }
+
         if (isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
         }
 
-        return getElements(context, data.object);
+        return getElements(
+            context,
+            locator.locator.contains(SikuliCoreConstants.SIMILARITY_SEPARATOR) ? new Pattern(data.object).similar(similarity) : data.object
+        );
     }
 
     private static Function<Data<Region>, Data<MatchList>> getElementsCore(LazyLocator locator) {
@@ -250,7 +268,7 @@ public interface SikuliFunctions {
 
     static Data<Match> getElementByIndex(Data<MatchList> data, int index) {
         final var nameof = "getElementByIndex";
-        if (isInvalidOrFalse(data) || BasicPredicateFunctions.isNegative(index)) {
+        if (isInvalidOrFalse(data) || BasicPredicates.isNegative(index)) {
             return prependMessage(SikuliDataConstants.NULL_MATCH, nameof, "Data or index was null. Index: " + index + " Data: " + data.toString());
         }
 
@@ -271,10 +289,10 @@ public interface SikuliFunctions {
 
     static RegionFunction<Match> getElementByIndex(RegionFunction<MatchList> getter, int index) {
         return RegionFunctionFactory.get(ifDependency(
-                "getElementByIndexFrom",
-                isNotNull(getter) && BasicPredicateFunctions.isNonNegative(index),
-                DataExecutionFunctions.validChain(getter, getElementByIndex(index), SikuliDataConstants.NULL_MATCH),
-                SikuliDataConstants.NULL_MATCH
+            "getElementByIndexFrom",
+            isNotNull(getter) && BasicPredicates.isNonNegative(index),
+            DataExecutionFunctions.validChain(getter, getElementByIndex(index), SikuliDataConstants.NULL_MATCH),
+            SikuliDataConstants.NULL_MATCH
         ));
     }
 
@@ -311,10 +329,10 @@ public interface SikuliFunctions {
 
     static RegionFunction<Match> getElementByContainedText(RegionFunction<MatchList> getter, String message) {
         return RegionFunctionFactory.get(ifDependency(
-                "getElementByContainedText",
-                isNotNull(getter) && isNotBlank(message),
-                DataExecutionFunctions.validChain(getter, getElementByContainedText(message), SikuliDataConstants.NULL_MATCH),
-                SikuliDataConstants.NULL_MATCH
+            "getElementByContainedText",
+            isNotNull(getter) && isNotBlank(message),
+            DataExecutionFunctions.validChain(getter, getElementByContainedText(message), SikuliDataConstants.NULL_MATCH),
+            SikuliDataConstants.NULL_MATCH
         ));
     }
 
@@ -324,7 +342,8 @@ public interface SikuliFunctions {
     }
 
     static RegionFunction<Match> getElementFromSingle(RegionFunction<MatchList> getter) {
-        return RegionFunctionFactory.get(ifDependency("getElementFromSingle", isNotNull(getter), DataExecutionFunctions.validChain(getter, getElementByIndex(0), SikuliDataConstants.NULL_MATCH), SikuliDataConstants.NULL_MATCH));
+        final var negative = SikuliDataConstants.NULL_MATCH;
+        return RegionFunctionFactory.get(ifDependency("getElementFromSingle", isNotNull(getter), DataExecutionFunctions.validChain(getter, getElementByIndex(0), negative), negative));
     }
     static <T> RegionFunction<T> getWithLazyLocator(GetWithRegionData<LazyLocatorList, LazyLocator, String, T> data) {
         return RegionFunctionFactory.get(DataExecutionFunctions.ifDependency(
@@ -336,9 +355,9 @@ public interface SikuliFunctions {
     }
 
     static <WE, BY, BYY extends String, W extends DecoratedList<BY>> RegionFunction<WE> getFromSingle(
-            Function<GetWithRegionData<W, BY, BYY, WE>, RegionFunction<WE>> getter,
-            GetWithRegionData<W, BY, BYY, WE> data,
-            String nameof
+        Function<GetWithRegionData<W, BY, BYY, WE>, RegionFunction<WE>> getter,
+        GetWithRegionData<W, BY, BYY, WE> data,
+        String nameof
     ) {
         return RegionFunctionFactory.get(ifDependency(nameof, data.locators.isSingle(), getter.apply(data), data.guardData));
     }
@@ -350,7 +369,6 @@ public interface SikuliFunctions {
             "getElementFromSingle"
         );
     }
-
 
     private static Data<MatchList> getElementsAmountCore(Data<MatchList> data, String locator, int expected) {
         final var nameof = "getElementsAmountCore";
@@ -367,7 +385,7 @@ public interface SikuliFunctions {
 
         final var size = (
             data.status &&
-            CollectionPredicateFunctions.isNonEmptyAndOfType(object, Match.class) &&
+            CollectionPredicates.isNonEmptyAndOfType(object, Match.class) &&
             CoreUtilities.isNotEqual(SikuliDataConstants.NULL_MATCH.object, object.first())
         ) ? object.size() : 0;
         final var status = size == expected;
@@ -380,19 +398,19 @@ public interface SikuliFunctions {
 
     static RegionFunction<MatchList> getElementsAmount(RegionFunction<MatchList> getter, LazyLocator locator, int expected) {
         return RegionFunctionFactory.get(ifDependency(
-                "getElementsAmount",
-                isNotNull(getter) && isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicateFunctions.isNonNegative(expected),
-                DataExecutionFunctions.validChain(getter, getElementsAmountCore(SikuliUtilities.getLocator(locator).object, expected), SikuliDataConstants.NULL_LIST),
-                SikuliDataConstants.NULL_LIST
+            "getElementsAmount",
+            isNotNull(getter) && isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicates.isNonNegative(expected),
+            DataExecutionFunctions.validChain(getter, getElementsAmountCore(SikuliUtilities.getLocator(locator).object, expected), SikuliDataConstants.NULL_LIST),
+            SikuliDataConstants.NULL_LIST
         ));
     }
 
     static RegionFunction<MatchList> getElementsAmount(LazyLocator locator, int expected) {
         return RegionFunctionFactory.get(ifDependency(
-                "getElementsAmount",
-                isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicateFunctions.isNonNegative(expected),
-                getElementsAmount(getElements(locator), locator, expected),
-                SikuliDataConstants.NULL_LIST
+            "getElementsAmount",
+            isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicates.isNonNegative(expected),
+            getElementsAmount(getElements(locator), locator, expected),
+            SikuliDataConstants.NULL_LIST
         ));
     }
 
@@ -405,7 +423,7 @@ public interface SikuliFunctions {
     }
 
     static RegionFunction<Match> getElement(String locator) {
-        return RegionFunctionFactory.get(ifDependency("getElement", FrameworkCoreFormatter.isInvalidLocatorMessage(locator, MatchLazyLocatorFactory::get), getElementFromSingle(getSingleElementList(MatchLazyLocatorFactory.get(locator))), SikuliDataConstants.NULL_MATCH));
+        return getElement(MatchLazyLocatorFactory.get(locator));
     }
 
     static <T> RegionFunction<ExternalMatchData> getLazyMatchByExternal(LazyMatch element, ExternalSikuliSelectorData externalData, Map<String, DecoratedList<SelectorKeySpecificityData>> typeKeys) {
@@ -503,7 +521,7 @@ public interface SikuliFunctions {
     }
 
     static Data<Integer> getNextKey(DecoratedList<String> keys, int parameterIndex) {
-        return isNotNull(keys) && BasicPredicateFunctions.isNonNegative(parameterIndex) && keys.hasIndex(parameterIndex) ? (
+        return isNotNull(keys) && BasicPredicates.isNonNegative(parameterIndex) && keys.hasIndex(parameterIndex) ? (
                 DataFactoryFunctions.getWithMessage(0, true, keys.get(parameterIndex))
         ) : replaceMessage(CoreDataConstants.NULL_INTEGER, "getNextKey", "The parameter map didn't contain an indexed com.github.karsaii.framework.core.selector-type it should have" + CoreFormatterConstants.END_LINE);
     }
