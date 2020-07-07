@@ -1,6 +1,11 @@
 package com.github.karsaii.framework.sikuli.constants;
 
 import com.github.karsaii.core.constants.validators.CoreFormatterConstants;
+import com.github.karsaii.core.extensions.DecoratedList;
+import com.github.karsaii.core.namespaces.validators.CoreFormatter;
+import com.github.karsaii.core.records.Data;
+import com.github.karsaii.framework.core.namespaces.FrameworkFunctions;
+import com.github.karsaii.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.github.karsaii.framework.sikuli.namespaces.extensions.boilers.MatchList;
 import com.github.karsaii.framework.sikuli.namespaces.factories.LazyMatchFactory;
 import com.github.karsaii.framework.sikuli.records.lazy.LazyMatch;
@@ -11,17 +16,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import static com.github.karsaii.core.extensions.namespaces.CoreUtilities.getIncrementalUUID;
 
 public abstract class SikuliCoreConstants {
     public static AtomicInteger ATOMIC_COUNT = new AtomicInteger();
     public static final String EMPTY_LOCATOR_STRING = CoreFormatterConstants.EMPTY;
-    public static final LazyMatch NULL_LAZY_MATCH = LazyMatchFactory.getWithDefaultLocatorsAndValidator("Null Lazy Match " + getIncrementalUUID(ATOMIC_COUNT));
-    public static final FindFailed NULL_EXCEPTION = new FindFailed("Null find failed exception - some parameter or such is wrong, somewhere" + CoreFormatterConstants.END_LINE);
-    public static final List<Match> NULL_MATCH_LIST = new ArrayList<>();
-    public static final Match NULL_MATCH = new Match();
-    public static final Iterator<Match> NULL_MATCH_ITERATOR = NULL_MATCH_LIST.iterator();
 
-    public static final MatchList NULL_MATCH_MATCHLIST = new MatchList(NULL_MATCH_LIST);
+    public static final String SIMILARITY_SEPARATOR = " SIMILARITY: ";
+
+    public static final FindFailed INVALID_FIND_FAILED_EXCEPTION = new FindFailed(SikuliFormatterConstants.INVALID_FIND_FAILED_MESSAGE);
+    public static final Match NULL_MATCH = new Match();
+    private static final List<Match> EMPTY_LIST_OF_MATCH = new ArrayList<>();
+    public static final Iterator<Match> NULL_MATCH_ITERATOR = EMPTY_LIST_OF_MATCH.iterator();
+    public static final MatchList INVALID_MATCHLIST = new MatchList(EMPTY_LIST_OF_MATCH);
+    public static final LazyMatch INVALID_LAZY_MATCH = LazyMatchFactory.getWithDefaultLocatorsAndValidator("Null Lazy Match " + getIncrementalUUID(ATOMIC_COUNT));
+    public static final Function<Data<DecoratedList<?>>, String> MATCH_LIST_VALIDATOR = CoreFormatter.isValidTypedNonEmptyListMessage(Match.class);
+    public static final Function<Data<DecoratedList<?>>, Data<Integer>> MATCH_COUNT = FrameworkFunctions.getCountOfElements("Match");
 }

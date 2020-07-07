@@ -159,19 +159,19 @@ public interface LazyIndexedMatchFactory {
     }
 
     static LazyFilteredMatchParameters getWithFilterParametersAndLocator(boolean isFiltered, String message, LazyLocator lazyLocator, String getter) {
-        return getWithFilterParametersAndLocatorList(isFiltered, message, PROBABILITY, LazyLocatorListFactory.getWithSingleItem(lazyLocator), getter);
+        return getWithFilterParametersAndLocator(isFiltered, message, PROBABILITY, lazyLocator, getter);
     }
 
     static LazyFilteredMatchParameters getWithFilterParametersAndLocator(boolean isFiltered, String message, double probability, LazyLocator lazyLocator) {
-        return getWithFilterParametersAndLocatorList(isFiltered, message, probability, LazyLocatorListFactory.getWithSingleItem(lazyLocator), GETTER);
+        return getWithFilterParametersAndLocator(isFiltered, message, probability, lazyLocator, GETTER);
     }
 
     static LazyFilteredMatchParameters getWithFilterParametersAndLocator(boolean isFiltered, String message, LazyLocator lazyLocator) {
-        return getWithFilterParametersAndLocatorList(isFiltered, message, PROBABILITY, LazyLocatorListFactory.getWithSingleItem(lazyLocator), GETTER);
+        return getWithFilterParametersAndLocator(isFiltered, message, PROBABILITY, lazyLocator, GETTER);
     }
 
     static LazyFilteredMatchParameters getWithFilterParametersAndLocator(String message, double probability, LazyLocator lazyLocator, String getter) {
-        return getWithFilterParametersAndLocatorList(message, probability, LazyLocatorListFactory.getWithSingleItem(lazyLocator), getter);
+        return getWithFilterParametersAndLocator(true, message, probability, lazyLocator, getter);
     }
 
     static LazyFilteredMatchParameters getWithFilterParametersAndLocator(String message, double probability, LazyLocator lazyLocator) {

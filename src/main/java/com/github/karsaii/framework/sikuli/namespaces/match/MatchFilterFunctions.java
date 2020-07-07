@@ -24,7 +24,12 @@ import static com.github.karsaii.core.namespaces.DataExecutionFunctions.ifDepend
 import static com.github.karsaii.core.namespaces.DataExecutionFunctions.validChain;
 
 public interface MatchFilterFunctions {
-    private static <T> Function<T, Function<Region, Data<Match>>> getFilteredElement(String nameof, BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data, Function<T, Function<Data<MatchList>, Data<Match>>> filterFunction, Function<T, String> valueGuard) {
+    private static <T> Function<T, Function<Region, Data<Match>>> getFilteredElement(
+        String nameof,
+        BaseFilterParameters<Region, ManyMatchesGetter, MatchList> data,
+        Function<T, Function<Data<MatchList>, Data<Match>>> filterFunction,
+        Function<T, String> valueGuard
+    ) {
         return value -> ifDependency(
                 nameof,
                 MatchFilterParametersValidators.isInvalidElementFilterParametersMessage(data) + valueGuard.apply(value),

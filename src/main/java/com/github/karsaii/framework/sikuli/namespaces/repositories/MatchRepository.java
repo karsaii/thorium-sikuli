@@ -32,8 +32,8 @@ import java.util.Map;
 
 import static com.github.karsaii.core.namespaces.DataFactoryFunctions.prependMessage;
 import static com.github.karsaii.core.namespaces.DataFactoryFunctions.replaceMessage;
-import static com.github.karsaii.core.namespaces.validators.DataValidators.isInvalidOrFalse;
-import static com.github.karsaii.core.namespaces.validators.DataValidators.isValidNonFalse;
+import static com.github.karsaii.core.namespaces.predicates.DataPredicates.isInvalidOrFalse;
+import static com.github.karsaii.core.namespaces.predicates.DataPredicates.isValidNonFalse;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface MatchRepository {

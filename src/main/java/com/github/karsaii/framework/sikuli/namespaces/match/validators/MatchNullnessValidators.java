@@ -7,7 +7,7 @@ import org.sikuli.script.Match;
 import java.util.Objects;
 
 import static com.github.karsaii.core.extensions.namespaces.NullableFunctions.isNull;
-import static com.github.karsaii.core.namespaces.validators.DataValidators.isInvalidOrFalse;
+import static com.github.karsaii.core.namespaces.predicates.DataPredicates.isInvalidOrFalse;
 
 public interface MatchNullnessValidators {
     static boolean isNullMatch(Match match) {

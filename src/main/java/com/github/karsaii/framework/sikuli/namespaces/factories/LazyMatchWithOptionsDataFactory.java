@@ -51,6 +51,6 @@ public interface LazyMatchWithOptionsDataFactory {
     }
 
     static LazyMatchWithOptionsData getWithDefaults() {
-        return getWithSpecificLazyMatch(SikuliCoreConstants.NULL_LAZY_MATCH);
+        return getWithSpecificLazyMatch(SikuliCoreConstants.INVALID_LAZY_MATCH);
     }
 }
