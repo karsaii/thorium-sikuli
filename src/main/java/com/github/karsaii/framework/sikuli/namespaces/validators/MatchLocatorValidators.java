@@ -25,7 +25,7 @@ public interface MatchLocatorValidators {
             }
         }
 
-        return getNamedErrorMessageOrEmpty("isValidStrategy: ", message);
+        return getNamedErrorMessageOrEmpty("isValidStrategy", message);
     }
 
     static String isTabPaddedLocator(String locator) {
@@ -33,7 +33,7 @@ public interface MatchLocatorValidators {
     }
 
     static String isValidImageLocator(String locator) {
-        final var nameof = "isValidImageLocator: ";
+        final var nameof = "isValidImageLocator";
         var message = CoreFormatter.isBlankMessageWithName(locator, "Locator");
         if (isNotBlank(message)) {
             return getNamedErrorMessageOrEmpty(nameof, message);
@@ -45,16 +45,18 @@ public interface MatchLocatorValidators {
         }
 
         if (isBlank(message)) {
-            final var splits = filePath.split(SikuliCoreConstants.SIMILARITY_SEPARATOR);
-            filePath = splits[0];
-            if (SizablePredicates.isSizeEqualTo(splits.length, 2)) {
-                final var similarity = Double.parseDouble(splits[1]);
-                message += (
-                    (isBlank(isTabPaddedLocator(filePath)) ? "Locator is a Text Locator" + CoreFormatterConstants.END_LINE : CoreFormatterConstants.EMPTY) +
-                    ((Math.abs(similarity) < 0.001) ? "Similarity score is zero(ish)(\"" + similarity + "\")" + CoreFormatterConstants.END_LINE : CoreFormatterConstants.EMPTY)
-                );
-            } else {
-                message += "Too many separators in locator" + CoreFormatterConstants.END_LINE;
+            if (StringUtilities.contains(filePath, SikuliCoreConstants.SIMILARITY_SEPARATOR)) {
+                final var splits = filePath.split(SikuliCoreConstants.SIMILARITY_SEPARATOR);
+                filePath = splits[0];
+                if (SizablePredicates.isSizeEqualTo(splits.length, 2)) {
+                    final var similarity = Double.parseDouble(splits[1]);
+                    message += (
+                            (isBlank(isTabPaddedLocator(filePath)) ? "Locator is a Text Locator" + CoreFormatterConstants.END_LINE : CoreFormatterConstants.EMPTY) +
+                                    ((Math.abs(similarity) < 0.001) ? "Similarity score is zero(ish)(\"" + similarity + "\")" + CoreFormatterConstants.END_LINE : CoreFormatterConstants.EMPTY)
+                    );
+                } else {
+                    message += "Too many separators in locator" + CoreFormatterConstants.END_LINE;
+                }
             }
         }
 
@@ -73,7 +75,7 @@ public interface MatchLocatorValidators {
     static String isImageLocator(String locator) {
         var message = CoreFormatter.isBlankMessageWithName(locator, "Locator");
         if (isNotBlank(message)) {
-            return getNamedErrorMessageOrEmpty("isImageLocator: ", message);
+            return getNamedErrorMessageOrEmpty("isImageLocator", message);
         }
 
         var filePath = locator;
@@ -92,11 +94,11 @@ public interface MatchLocatorValidators {
             message += "Image file doesn't exist" + CoreFormatterConstants.END_LINE;
         }
 
-        return getNamedErrorMessageOrEmpty("isImageLocator: ", message);
+        return getNamedErrorMessageOrEmpty("isImageLocator", message);
     }
 
     static String isValidTextLocator(String locator) {
-        return getNamedErrorMessageOrEmpty("isValidTextLocator: ", isTabPaddedLocator(locator));
+        return getNamedErrorMessageOrEmpty("isValidTextLocator", isTabPaddedLocator(locator));
     }
 
     static String isValidLocator(String locator) {
@@ -109,11 +111,11 @@ public interface MatchLocatorValidators {
             }
         }
 
-        return getNamedErrorMessageOrEmpty("isValidLocator: ", message);
+        return getNamedErrorMessageOrEmpty("isValidLocator", message);
     }
 
     static String isValidLocatorAndStrategy(String locator, String strategy) {
         var message = isValidLocator(locator) + isValidStrategy(strategy);
-        return getNamedErrorMessageOrEmpty("isValidLocatorAndStrategy: ", message);
+        return getNamedErrorMessageOrEmpty("isValidLocatorAndStrategy", message);
     }
 }
