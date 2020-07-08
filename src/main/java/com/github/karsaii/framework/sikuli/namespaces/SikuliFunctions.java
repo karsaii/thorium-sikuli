@@ -46,6 +46,7 @@ import com.github.karsaii.framework.sikuli.namespaces.repositories.MatchReposito
 import com.github.karsaii.framework.sikuli.namespaces.match.validators.MatchGetterValidators;
 import com.github.karsaii.framework.sikuli.namespaces.match.validators.MatchNullnessValidators;
 import com.github.karsaii.framework.sikuli.namespaces.match.validators.MatchValidators;
+import com.github.karsaii.framework.sikuli.namespaces.validators.MatchLocatorValidators;
 import com.github.karsaii.framework.sikuli.namespaces.validators.SikuliFormatter;
 import com.github.karsaii.framework.sikuli.records.ExternalMatchData;
 import com.github.karsaii.framework.sikuli.records.ExternalSikuliSelectorData;
@@ -118,10 +119,10 @@ public interface SikuliFunctions {
         var matches = SikuliCoreConstants.NULL_MATCH_ITERATOR;
         try {
             final var loc = target instanceof String ? ((String)target).trim() : target;
-            if (target instanceof String) {
-                matches = region.findAllText((String)loc).iterator();
-            } else {
+            if (isBlank(MatchLocatorValidators.isValidImageLocator((String)loc))) {
                 matches = region.findAll(target);
+            } else {
+                matches = region.findAllText((String)loc).iterator();
             }
         } catch (RuntimeException ex) {
             if (!isFindFailed(ex)) {
