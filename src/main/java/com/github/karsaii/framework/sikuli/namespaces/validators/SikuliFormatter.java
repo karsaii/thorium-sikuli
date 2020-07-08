@@ -13,13 +13,13 @@ import java.util.function.Function;
 public interface SikuliFormatter {
     static String getElementsParametersMessage(LazyLocatorList locators, Function<LazyLocator, RegionFunction<MatchList>> getter) {
         return CoreFormatter.getNamedErrorMessageOrEmpty(
-            "getElementsParametersMessage: ",
+            "getElementsParametersMessage",
             CoreFormatter.isNullOrEmptyMessageWithName(locators, "Lazy Locators List") + CoreFormatter.isNullMessageWithName(getter, "Getter")
         );
     }
 
     static String getElementsParametersMessage(LazyLocatorList locators) {
-        return CoreFormatter.getNamedErrorMessageOrEmpty("getElementsParametersMessage: ", CoreFormatter.isNullOrEmptyMessageWithName(locators, "Lazy Locators List"));
+        return CoreFormatter.getNamedErrorMessageOrEmpty("getElementsParametersMessage", CoreFormatter.isNullOrEmptyMessageWithName(locators, "Lazy Locators List"));
     }
 
     static String getNestedElementsErrorMessage(String locator, Data<Region> context) {

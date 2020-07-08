@@ -117,7 +117,12 @@ public interface SikuliFunctions {
         var exception = SikuliCoreConstants.INVALID_FIND_FAILED_EXCEPTION;
         var matches = SikuliCoreConstants.NULL_MATCH_ITERATOR;
         try {
-            matches = region.findAll(target);
+            final var loc = target instanceof String ? ((String)target).trim() : target;
+            if (target instanceof String) {
+                matches = region.findAllText((String)loc).iterator();
+            } else {
+                matches = region.findAll(target);
+            }
         } catch (RuntimeException ex) {
             if (!isFindFailed(ex)) {
                 throw ex;
