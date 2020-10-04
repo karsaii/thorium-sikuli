@@ -3,10 +3,12 @@ package com.github.karsaii.framework.sikuli.namespaces.wait;
 import com.github.karsaii.core.constants.CoreDataConstants;
 import com.github.karsaii.core.constants.validators.CoreFormatterConstants;
 import com.github.karsaii.core.namespaces.DataFactoryFunctions;
+import com.github.karsaii.core.namespaces.factories.wait.WaitDataFactory;
+import com.github.karsaii.core.namespaces.factories.wait.WaitTimeDataFactory;
 import com.github.karsaii.core.namespaces.wait.Wait;
-import com.github.karsaii.core.namespaces.wait.WaitTimeDataFactory;
+
 import com.github.karsaii.core.records.Data;
-import com.github.karsaii.core.records.WaitData;
+import com.github.karsaii.core.records.wait.WaitData;
 import com.github.karsaii.framework.sikuli.constants.GetElementsConstants;
 import com.github.karsaii.framework.sikuli.namespaces.SikuliBasicFunctions;
 import com.github.karsaii.framework.sikuli.namespaces.extensions.boilers.RegionFunction;
@@ -26,7 +28,7 @@ public interface SikuliWaitFunctions {
             return region -> DataFactoryFunctions.getWithNameAndMessage(null, false, nameof, CoreFormatterConstants.PARAMETER_ISSUES);
         }
 
-        final var waitData = new WaitData<>(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
+        final var waitData = WaitDataFactory.getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
         return RegionFunctionFactory.get(Wait.core(waitData));
     }
 
