@@ -13,6 +13,6 @@ public abstract class DesktopConstants {
     public static final String START_BUTTON_PATH = COMPONENT_PATH + "start-menu-button-cropped-no-values.png";
 
     public static final LazyMatch START_BUTTON = LazyMatchFactory.getWithFilterParameters(START_BUTTON_NAME, LazyLocatorFactory.get(START_BUTTON_PATH, "image"));
-    public static final LazyMatch INTELLIJ_TEXT = LazyMatchFactory.getWithFilterParameters("IntelliJ text", LazyLocatorFactory.get("IntelliJ IDEA", "text"));
+    public static final LazyMatch INTELLIJ_TEXT = LazyMatchFactory.getWithFilterParameters("IntelliJ text", LazyLocatorFactory.get("IntelliJ", "text"));
 
 }
