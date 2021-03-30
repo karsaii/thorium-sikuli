@@ -74,7 +74,7 @@ public interface MatchRepository {
         final var object = elementRepository.containsKey(name);
         final var message = SikuliFormatterConstants.LAZY_MATCH + CoreFormatter.getOptionMessage(object) + " found by name(\"" + name + "\")" + CoreFormatterConstants.END_LINE;
 
-        return DataFactoryFunctions.getWithNameAndMessage(object, true, nameof, message);
+        return DataFactoryFunctions.getWith(object, true, nameof, message);
     }
 
     static Data<Boolean> containsElement(String name, Data<Boolean> defaultValue) {
@@ -97,7 +97,7 @@ public interface MatchRepository {
         final var status = CoreUtilities.isNotEqual(object, defaultObject);
         final var message = SikuliFormatterConstants.LAZY_MATCH + CoreFormatter.getOptionMessage(status) + " found by name(\"" + name + "\")" + CoreFormatterConstants.END_LINE;
 
-        return DataFactoryFunctions.getWithNameAndMessage(object, status, nameof, message);
+        return DataFactoryFunctions.getWith(object, status, nameof, message);
     }
 
     static Data<CachedLazyMatchData> getElement(String name, Data<CachedLazyMatchData> defaultValue) {

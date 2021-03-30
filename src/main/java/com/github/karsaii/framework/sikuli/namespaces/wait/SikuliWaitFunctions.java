@@ -25,7 +25,7 @@ public interface SikuliWaitFunctions {
     static <T> RegionFunction<T> waitCore(String name, Function<Region, Data<T>> function, Predicate<Data<T>> exitCondition, String conditionMessage, int interval, int timeout) {
         final var nameof = isNotBlank(name) ? name : "waitCore";
         if ((interval < 300) || (timeout < 300) || (timeout < interval)) {
-            return region -> DataFactoryFunctions.getWithNameAndMessage(null, false, nameof, CoreFormatterConstants.PARAMETER_ISSUES);
+            return region -> DataFactoryFunctions.getWith(null, false, nameof, CoreFormatterConstants.PARAMETER_ISSUES);
         }
 
         final var waitData = WaitDataFactory.getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));

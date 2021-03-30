@@ -94,7 +94,7 @@ public interface SikuliUtilities {
 
         final var locator = data.locator;
         final var strategy = data.strategy;
-        return DataFactoryFunctions.getWithMessage(strategyMap.get(MatchSelectorStrategy.getValueOf(strategy)).apply(locator), true, "Locator: By " + strategy + " with locator: " + locator);
+        return DataFactoryFunctions.getWith(strategyMap.get(MatchSelectorStrategy.getValueOf(strategy)).apply(locator), true, "Locator: By " + strategy + " with locator: " + locator);
     }
 
     static Data<String> getLocator(LazyLocator data) {

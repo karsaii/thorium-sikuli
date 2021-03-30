@@ -45,7 +45,7 @@ public interface ApplicationExecutor {
             ExecutionStateData stateData,
             Function<App, Data<?>>... steps
     ) {
-        final var negative = DataFactoryFunctions.getWithMessage(ExecutionResultDataFactory.getWithDefaultState((ReturnType) CoreConstants.STOCK_OBJECT), false, CoreFormatterConstants.EMPTY);
+        final var negative = DataFactoryFunctions.getWith(ExecutionResultDataFactory.getWithDefaultState((ReturnType) CoreConstants.STOCK_OBJECT), false, CoreFormatterConstants.EMPTY);
         return executeGuardCore(execution, ApplicationFunctionFactory.get(execution.executor.apply(execution.functionData, stateData, steps)), negative, steps.length);
     }
 
@@ -65,7 +65,7 @@ public interface ApplicationExecutor {
     }
 
     static <ReturnType> ApplicationFunction<ReturnType> execute(ExecutionParametersData<Function<App, Data<?>>, ApplicationFunction<ExecutionResultData<ReturnType>>> execution, ApplicationFunction<?>... steps) {
-        final var negative = DataFactoryFunctions.getWithMessage((ReturnType) CoreConstants.STOCK_OBJECT, false, CoreFormatterConstants.EMPTY);
+        final var negative = DataFactoryFunctions.getWith((ReturnType) CoreConstants.STOCK_OBJECT, false, CoreFormatterConstants.EMPTY);
         return executeGuardCore(execution, executeData(execution, steps), negative, steps.length);
     }
 

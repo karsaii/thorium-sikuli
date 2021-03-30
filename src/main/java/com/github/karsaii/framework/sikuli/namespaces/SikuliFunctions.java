@@ -168,7 +168,7 @@ public interface SikuliFunctions {
         final var list = iteratorToList(matches);
         final var status = !isValidFindFailedException(exception);
         final var object = status ? new MatchList(list) : SikuliCoreConstants.INVALID_MATCHLIST;
-        return DataFactoryFunctions.getWithNameAndMessage(object, status, "getElements", SikuliFormatters.getFindAllMessage(list.size(), status), exception);
+        return DataFactoryFunctions.getWith(object, status, "getElements", SikuliFormatters.getFindAllMessage(list.size(), status), exception);
     }
 
     private static Data<MatchList> getElementsCore(Data<Region> contextData, LazyLocator locator) {
@@ -176,13 +176,13 @@ public interface SikuliFunctions {
         final var negative = SikuliCoreConstants.INVALID_MATCHLIST;
         var errorMessage = FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator) + isInvalidOrFalseMessage(contextData);
         if (isNotBlank(errorMessage)) {
-            return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
+            return DataFactoryFunctions.getInvalidWith(negative, nameof, errorMessage);
         }
 
         final var context = contextData.object;
         errorMessage = CoreFormatter.isNullMessageWithName(context, "Context");
         if (isNotBlank(errorMessage)) {
-            return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
+            return DataFactoryFunctions.getInvalidWith(negative, nameof, errorMessage);
         }
 
         var data = CoreDataConstants.NULL_STRING;
@@ -201,7 +201,7 @@ public interface SikuliFunctions {
         }
 
         if (isNotBlank(errorMessage)) {
-            return DataFactoryFunctions.getInvalidWithNameAndMessage(negative, nameof, errorMessage);
+            return DataFactoryFunctions.getInvalidWith(negative, nameof, errorMessage);
         }
 
         return getElements(
@@ -247,7 +247,7 @@ public interface SikuliFunctions {
             elementList.addAllNullSafe(list);
         }
 
-        return DataFactoryFunctions.getWithMessage(elementList, elementList.isNotNullAndNonEmpty() && (index == length), message.toString());
+        return DataFactoryFunctions.getWith(elementList, elementList.isNotNullAndNonEmpty() && (index == length), message.toString());
     }
 
     private static RegionFunction<MatchList> getElements(RegionFunction<Region> getter, LazyLocator locator) {
@@ -257,7 +257,7 @@ public interface SikuliFunctions {
     static Data<Region> getSearchContext(Region region) {
         final var status = isNotNull(region);
         final var message = "Region was" + (status ? "" : "n't") + " null" + CoreFormatterConstants.END_LINE;
-        return DataFactoryFunctions.getWithNameAndMessage(region, status, "getSearchContext", message);
+        return DataFactoryFunctions.getWith(region, status, "getSearchContext", message);
     }
 
     static RegionFunction<MatchList> getElements(LazyLocator locator) {
@@ -286,7 +286,7 @@ public interface SikuliFunctions {
         final var size = object.size();
         final var status = (size > index);
         final var message = "Element was" + (status ? "" : "n't") + " found by index(\"" + index + "\"), list size: " + size + CoreFormatterConstants.END_LINE + data.message;
-        return DataFactoryFunctions.getWithNameAndMessage(object.get(index), status, nameof, message);
+        return DataFactoryFunctions.getWith(object.get(index), status, nameof, message);
     }
 
     static Function<Data<MatchList>, Data<Match>> getElementByIndex(int index) {
@@ -326,7 +326,7 @@ public interface SikuliFunctions {
 
         final var status = MatchValidators.isNotNull(current) && (index < length);
         final var message = "Element was" + (status ? "" : "n't") + " found by text(\"" + text + "\"), list size: " + length + CoreFormatterConstants.END_LINE + data.message;
-        return DataFactoryFunctions.getWithNameAndMessage(current, status, nameof, message);
+        return DataFactoryFunctions.getWith(current, status, nameof, message);
     }
 
     static Function<Data<MatchList>, Data<Match>> getElementByContainedText(String message) {
@@ -395,7 +395,7 @@ public interface SikuliFunctions {
             CoreUtilities.isNotEqual(SikuliDataConstants.NULL_MATCH.object, object.first())
         ) ? object.size() : 0;
         final var status = size == expected;
-        return DataFactoryFunctions.getWithNameAndMessage(object, status, nameof, FrameworkCoreFormatter.getElementsAmountMessage(locator, status, expected, size), data.exception);
+        return DataFactoryFunctions.getWith(object, status, nameof, FrameworkCoreFormatter.getElementsAmountMessage(locator, status, expected, size), data.exception);
     }
 
     static Function<Data<MatchList>, Data<MatchList>> getElementsAmountCore(String locator, int expected) {
@@ -478,7 +478,7 @@ public interface SikuliFunctions {
                     element.parameters.putIfAbsent(parameterKey, lep);
                     final var update = MatchRepository.updateTypeKeys(lep.lazyLocators, typeKeys, types, parameterKey);
                     return MatchNullnessValidators.isNotNullMatch(currentElement) ? (
-                        DataFactoryFunctions.getWithNameAndMessage(new ExternalMatchData(typeKeys, currentElement), true, nameof, "External function yielded a match" + CoreFormatterConstants.END_LINE)
+                        DataFactoryFunctions.getWith(new ExternalMatchData(typeKeys, currentElement), true, nameof, "External function yielded a match" + CoreFormatterConstants.END_LINE)
                     ) : replaceMessage(defaultValue, nameof, "All(\"" + length + "\") approaches were tried" + CoreFormatterConstants.END_LINE + currentElement.message.toString());
                 },
                 defaultValue
@@ -522,13 +522,13 @@ public interface SikuliFunctions {
         }
         final var key = type.get(index).selectorKey;
         return (isNotNull(key) && parameterMap.containsKey(key) ? (
-                DataFactoryFunctions.getWithMessage(index, true, key)
+                DataFactoryFunctions.getWith(index, true, key)
         ) : replaceMessage(CoreDataConstants.NULL_INTEGER, nameof, "The parameter map didn't contain an indexed com.github.karsaii.framework.core.selector-type it should have" + CoreFormatterConstants.END_LINE));
     }
 
     static Data<Integer> getNextKey(DecoratedList<String> keys, int parameterIndex) {
         return isNotNull(keys) && BasicPredicates.isNonNegative(parameterIndex) && keys.hasIndex(parameterIndex) ? (
-                DataFactoryFunctions.getWithMessage(0, true, keys.get(parameterIndex))
+                DataFactoryFunctions.getWith(0, true, keys.get(parameterIndex))
         ) : replaceMessage(CoreDataConstants.NULL_INTEGER, "getNextKey", "The parameter map didn't contain an indexed com.github.karsaii.framework.core.selector-type it should have" + CoreFormatterConstants.END_LINE);
     }
 
@@ -595,7 +595,7 @@ public interface SikuliFunctions {
                 final var externalData = data.externalData;
                 return cacheNonNullAndNotFalseLazyMatch(
                         dataElement,
-                        DataFactoryFunctions.getWithMessage(new ExternalMatchData(typeKeys, currentElement), isValidNonFalse(currentElement), message.message.toString()),
+                        DataFactoryFunctions.getWith(new ExternalMatchData(typeKeys, currentElement), isValidNonFalse(currentElement), message.message.toString()),
                         isBlank(FrameworkCoreFormatter.getExternalSelectorDataMessage(externalData)) ? getLazyMatchByExternal(dataElement, externalData, typeKeys).apply(region) : SikuliDataConstants.NULL_EXTERNAL_MATCH
                 );
             },
