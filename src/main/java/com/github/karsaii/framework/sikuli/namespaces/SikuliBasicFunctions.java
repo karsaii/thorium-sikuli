@@ -88,7 +88,7 @@ public interface SikuliBasicFunctions {
         final var list = SikuliUtilities.iteratorToList(matches);
         final var status = !FindFailedPredicates.isValidFindFailedException(exception);
         final var object = status ? MatchListFactory.getWith(list) : SikuliCoreConstants.INVALID_MATCHLIST;
-        return DataFactoryFunctions.getWithNameAndMessage(object, status, "getElements", SikuliFormatters.getFindAllMessage(list.size(), status), exception);
+        return DataFactoryFunctions.getWith(object, status, "getElements", SikuliFormatters.getFindAllMessage(list.size(), status), exception);
     }
 
     private static Data<MatchList> getElementsCore(Region region, Pattern pattern) {
@@ -152,7 +152,7 @@ public interface SikuliBasicFunctions {
         final var object = list.get(index);
         final var status = MatchValidators.isNotNull(object);
         final var message = "Element was " + (status ? "" : "not ") + "found" + CoreFormatterConstants.END_LINE;
-        return DataFactoryFunctions.getWithNameAndMessage(object, status, nameof, message);
+        return DataFactoryFunctions.getWith(object, status, nameof, message);
     }
 
     private static Data<Match> getElementCore(Region region, Pattern pattern) {
