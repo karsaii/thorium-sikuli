@@ -5,8 +5,10 @@ import com.github.karsaii.core.constants.validators.CoreFormatterConstants;
 import com.github.karsaii.core.extensions.DecoratedList;
 import com.github.karsaii.core.extensions.namespaces.CoreUtilities;
 import com.github.karsaii.core.extensions.namespaces.factories.DecoratedListFactory;
+import com.github.karsaii.core.extensions.namespaces.predicates.AmountPredicates;
 import com.github.karsaii.core.extensions.namespaces.predicates.BasicPredicates;
 import com.github.karsaii.core.extensions.namespaces.predicates.CollectionPredicates;
+import com.github.karsaii.core.extensions.namespaces.predicates.SizablePredicates;
 import com.github.karsaii.core.namespaces.BaseExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataFactoryFunctions;
@@ -16,6 +18,7 @@ import com.github.karsaii.core.records.Data;
 import com.github.karsaii.framework.core.namespaces.FrameworkCoreUtilities;
 import com.github.karsaii.framework.core.namespaces.FrameworkFunctions;
 import com.github.karsaii.framework.core.namespaces.factory.LazyLocatorFactory;
+import com.github.karsaii.framework.sikuli.enums.MatchSelectorStrategy;
 import com.github.karsaii.framework.sikuli.namespaces.factories.SikuliDataFactory;
 import com.github.karsaii.framework.core.namespaces.validators.FrameworkCoreFormatter;
 import com.github.karsaii.framework.core.namespaces.extensions.boilers.LazyLocatorList;
@@ -349,8 +352,9 @@ public interface SikuliFunctions {
 
     static RegionFunction<Match> getElementFromSingle(RegionFunction<MatchList> getter) {
         final var negative = SikuliDataConstants.NULL_MATCH;
-        return RegionFunctionFactory.get(ifDependency("getElementFromSingle", isNotNull(getter), DataExecutionFunctions.validChain(getter, getElementByIndex(0), negative), negative));
+        return ifDependency("getElementFromSingle", isNotNull(getter), DataExecutionFunctions.validChain(getter, getElementByIndex(0), negative), negative)::apply;
     }
+
     static <T> RegionFunction<T> getWithLazyLocator(GetWithRegionData<LazyLocatorList, LazyLocator, String, T> data) {
         return RegionFunctionFactory.get(DataExecutionFunctions.ifDependency(
             "getWithLazyLocator",
@@ -394,7 +398,7 @@ public interface SikuliFunctions {
             CollectionPredicates.isNonEmptyAndOfType(object, Match.class) &&
             CoreUtilities.isNotEqual(SikuliDataConstants.NULL_MATCH.object, object.first())
         ) ? object.size() : 0;
-        final var status = size == expected;
+        final var status = SizablePredicates.isSizeEqualTo(size, expected);
         return DataFactoryFunctions.getWith(object, status, nameof, FrameworkCoreFormatter.getElementsAmountMessage(locator, status, expected, size), data.exception);
     }
 
@@ -403,21 +407,21 @@ public interface SikuliFunctions {
     }
 
     static RegionFunction<MatchList> getElementsAmount(RegionFunction<MatchList> getter, LazyLocator locator, int expected) {
-        return RegionFunctionFactory.get(ifDependency(
+        return ifDependency(
             "getElementsAmount",
             isNotNull(getter) && isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicates.isNonNegative(expected),
             DataExecutionFunctions.validChain(getter, getElementsAmountCore(SikuliUtilities.getLocator(locator).object, expected), SikuliDataConstants.NULL_LIST),
             SikuliDataConstants.NULL_LIST
-        ));
+        )::apply;
     }
 
     static RegionFunction<MatchList> getElementsAmount(LazyLocator locator, int expected) {
-        return RegionFunctionFactory.get(ifDependency(
+        return ifDependency(
             "getElementsAmount",
             isNotBlank(FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator)) && BasicPredicates.isNonNegative(expected),
             getElementsAmount(getElements(locator), locator, expected),
             SikuliDataConstants.NULL_LIST
-        ));
+        )::apply;
     }
 
     static RegionFunction<MatchList> getSingleElementList(LazyLocator locator) {
@@ -425,7 +429,9 @@ public interface SikuliFunctions {
     }
 
     static RegionFunction<Match> getElement(LazyLocator locator) {
-        return RegionFunctionFactory.get(ifDependency("getElement", FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator), getElementFromSingle(getSingleElementList(locator)), SikuliDataConstants.NULL_MATCH));
+        final var defaultData = SikuliDataConstants.NULL_MATCH;
+        final var errorMessage = FrameworkCoreFormatter.isInvalidLazyLocatorMessage(locator, SikuliUtilities::getLocator);
+        return ifDependency("getElement", errorMessage, getElementFromSingle(getSingleElementList(locator)), defaultData)::apply;
     }
 
     static RegionFunction<Match> getElement(String locator) {
@@ -451,7 +457,7 @@ public interface SikuliFunctions {
                     final var length = externalData.limit;
                     var index = 0;
                     var message = replaceMessage(CoreDataConstants.NULL_STRING, nameof, "");
-                    var lep = LazyIndexedMatchFactory.getWithFilterParametersAndLocator(false, 0, MatchLazyLocatorFactory.getWithDefaults());
+                    var lep = LazyIndexedMatchFactory.getWithFilterParametersAndLocator(false, 0, MatchLazyLocatorFactory.getTextLocator("default"));
                     var getSelector = externalData.getSelector;
                     for(; index < length; ++index) {
                         selector = getSelector.apply(externalData.preferredProperties, failedSelectors.list).apply(region);
@@ -464,7 +470,7 @@ public interface SikuliFunctions {
                             continue;
                         }
 
-                        locator = MatchLazyLocatorFactory.get(selector.object, selectorType);
+                        locator = MatchLazyLocatorFactory.getWith(selector.object, MatchSelectorStrategy.getValueOf(selectorType));
                         parameterKey = FrameworkCoreFormatter.getUniqueGeneratedName(selectorType, SikuliCoreConstants.ATOMIC_COUNT);
                         lep = LazyIndexedMatchFactory.getWithFilterParametersAndLocator(false, 0, locator);
                         currentElement = MatchFilterFunctions.getElement(lep.lazyLocators, MatchFinderConstants.singleGetterMap, SingleMatchGetter.DEFAULT).apply(region);
