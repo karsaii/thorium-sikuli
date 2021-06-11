@@ -9,7 +9,7 @@ public enum SingleMatchGetter {
     DEFAULT("getElement");
 
     private static final Map<String, SingleMatchGetter> VALUES = new HashMap<>();
-    private String name;
+    private final String name;
 
     SingleMatchGetter(String name) {
         this.name = name;
