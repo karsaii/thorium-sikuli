@@ -12,6 +12,7 @@ import com.github.karsaii.core.extensions.namespaces.predicates.SizablePredicate
 import com.github.karsaii.core.namespaces.BaseExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataExecutionFunctions;
 import com.github.karsaii.core.namespaces.DataFactoryFunctions;
+import com.github.karsaii.core.namespaces.DataFunctions;
 import com.github.karsaii.core.namespaces.StringUtilities;
 import com.github.karsaii.core.namespaces.validators.CoreFormatter;
 import com.github.karsaii.core.records.Data;
@@ -236,7 +237,7 @@ public interface SikuliFunctions {
             }
 
             data = getter.apply(locator).apply(region);
-            message.append(index + data.message.toString() + CoreFormatterConstants.END_LINE);
+            message.append(index + DataFunctions.getFormattedMessage(data) + CoreFormatterConstants.END_LINE);
             if (isInvalidOrFalse(data)) {
                 continue;
             }

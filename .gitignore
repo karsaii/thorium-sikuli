@@ -163,3 +163,9 @@ target/*
 target/**
 ./target
 ./target/*
+
+
+./allure-results/
+./allure-results
+allure-results/
+allure-results
