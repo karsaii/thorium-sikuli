@@ -6,6 +6,7 @@ import com.github.karsaii.core.extensions.DecoratedList;
 import com.github.karsaii.core.extensions.namespaces.CoreUtilities;
 import com.github.karsaii.core.extensions.namespaces.NullableFunctions;
 import com.github.karsaii.core.namespaces.DataFactoryFunctions;
+import com.github.karsaii.core.namespaces.DataFunctions;
 import com.github.karsaii.core.namespaces.validators.CoreFormatter;
 import com.github.karsaii.core.records.Data;
 import com.github.karsaii.framework.core.abstracts.AbstractLazyResult;
@@ -118,7 +119,7 @@ public interface MatchRepository {
         var message = "";
         if (isValidNonFalse(cached) && !cached.object) {
             final var cachedElement = new LazyMatch(element.name, SikuliUtilities.getParametersCopy(element.parameters), element.validator);
-            message = MatchRepository.cacheMatch(cachedElement, typeKeys).message.toString();
+            message = DataFunctions.getFormattedMessage(MatchRepository.cacheMatch(cachedElement, typeKeys));
         }
 
         return message;
