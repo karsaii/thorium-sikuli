@@ -1,7 +1,7 @@
 package constants;
 
-import com.github.karsaii.core.extensions.namespaces.asserts.JUnit5StatusAdapter;
-import com.github.karsaii.core.records.Data;
+import com.neathorium.core.extensions.namespaces.asserts.JUnit5StatusAdapter;
+import com.neathorium.core.records.Data;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.function.BiConsumer;
